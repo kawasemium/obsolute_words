@@ -3,46 +3,63 @@ class Word{
     Origin;
     Num;//0~
     Letter;
-    top;
-    left;
-    size;
-    color;
+    Top;
+    Left;
+    Size;
+    Color;
+    IsFalling;
     constructor(or,nu,le){
         this.Origin=or;
         this.Num=nu;
         this.Letter=le;
-        this.top=0;
-        this.left=0;
-        this.size=10;
-        this.color=[0,0,0];
+        this.Top=0;
+        this.Left=0;
+        this.Size=20;
+        this.Color=[255,255,255];
+        this.IsFalling=true;
 
         this.Create();
     }
+    Update(){
+        if(this.IsFalling){
+            this.Fall();
+        }else{
+
+        }
+    }
     Create(){
         let tgt=document.createElement("div");
-        tgt.setAttribute("class","ExistWord");
-        tgt.style.fontSize=this.size+"px";
-        tgt.style.top=this.top;
-        tgt.style.left=this.left;
-        tgt.style.color="rgb("+this.color[0]+","+this.color[1]+","+this.color[2];
+        tgt.className="ExistWord";
+        tgt.style.fontSize=this.Size+"px";
+        tgt.style.top=this.Top;
+        tgt.style.left=this.Left;
+        tgt.style.color="rgb("+this.Color[0]+","+this.Color[1]+","+this.Color[2];
+        tgt.innerText=this.Letter;
         document.body.appendChild(tgt);
     }
+    Fall(){
+        
+    }
 }
+
 window.onload=function(){
     for(let i=0;i<3;i++){
         WordFall();
     }
     console.log(ExistWord);
 
+    //UpdateTimer=setInterval(Update,100);
 }
-
+function Update(){
+    console.log("Update");
+}
 
 function WordFall(){
     let index=Math.floor(Math.random()*(WordList.length));
     console.log(WordList[index]);
     let WordArray=WordList[index][0].split("");
     for(let i=0;i<WordArray.length;i++){
-        let NewWord=new Word(WordList[i][0],i,WordArray[i]);
+        let NewWord=new Word(WordList[index][0],i,WordArray[i]);
         ExistWord.push(NewWord);
     }
 }
