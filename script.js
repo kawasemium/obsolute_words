@@ -352,9 +352,11 @@ $(document).mousemove(function(e){
 $("#CalcAgeButton").mousedown(function(e){
     if(e.target.getAttribute("isPushed")=="false"){
         e.target.setAttribute("isPushed","true");
+        $("#CalcAgeMessage").attr("isDisplayed","true");
         $("#CalcAgeMessage").text(CalcAgeSystem.MakeMessage());
     }else if(e.target.getAttribute("isPushed")=="true"){
         e.target.setAttribute("isPushed","false");
+        $("#CalcAgeMessage").attr("isDisplayed","false");
     }
 })
 

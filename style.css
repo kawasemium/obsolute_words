@@ -14,7 +14,6 @@ body{
 }
 .CalcAge{
     position:absolute;
-    background-color: rgb(56, 62, 114);
 }
 #CalcAgeButton{
     width:50px;
@@ -23,9 +22,23 @@ body{
     left:20px;
     border-radius: 100%;
 }
+[isPushed="false"]{
+    background-color: rgb(233, 0, 0);
+}
+[isPushed="true"]{
+    background-color: rgba(78, 0, 0, 0.74);
+}
 #CalcAgeMessage{
     width:200px;
     height:50px;
     top:20px;
     left:90px;
+    font-size: 18px;
+    line-height: 50px;
+}
+[isDisplayed="false"]{
+    display: none;
+}
+[isDisplayed="true"]{
+    display: block;
 }
