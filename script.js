@@ -16,8 +16,10 @@ class Word{
     Left;
     Size;
     Color;
+    IsHovering;
     IsDragging;
     IsTarget;
+    FromTarget;//0, 1, ...
     IsFalling;
     FallingSpeed;
     constructor(ind,or,nu,ler,lef){
@@ -30,8 +32,10 @@ class Word{
         this.Size=20;
         this.Color=[255,255,255,0.5];
 
+        this.IsHovering=false;
         this.IsDragging=false;
         this.IsTarget=false;
+        this.FromTarget=1;
         this.IsFalling=true;
         this.FallingSpeed=20;
 
@@ -77,22 +81,29 @@ class Word{
         }else{
             let moveX=mouseX-this.Left;
             let moveY=mouseY-this.Top;
-            this.Left+=moveX/2;
-            this.Top+=moveY/2;
+            let Distance=Math.sqrt(Math.pow(moveX,2)+Math.pow(moveY,2));
+            if(Distance>this.Size*this.FromTarget){
+                this.Left+=moveX/2;
+                this.Top+=moveY/2;
+            }
         }
     }
 
     MouseOver(index){
-        //console.log(this.ExistIndex+" is Overed");
+        this.FindFamily().forEach(function(w,i){
+            w.IsHovering=true;
+        })
     }
     MouseOut(){
         //console.log(this.ExistIndex+" is Outed");
     }
     MouseDown(){
         this.IsTarget=true;
+        let TargetNum=this.Num;
         this.FindFamily().forEach(function(w,i){
             w.IsFalling=false;
             w.IsDragging=true;
+            w.FromTarget=Math.abs(w.Num-TargetNum);
         });
     }
     MouseUp(){
@@ -108,6 +119,10 @@ class Word{
         return Arr;
     }
 }
+
+//==============================
+// main functions
+//==============================
 
 window.onload=function(){
     UpdateTimer=setInterval(Update,100);
@@ -140,6 +155,10 @@ function WordCleaner(w,i){
     }
     //ExistWord=ExistWord.filter(Boolean);
 }
+
+//==============================
+// events
+//==============================
 
 $(document).mousedown(function(e){
     e.preventDefault();
@@ -181,7 +200,9 @@ function GetExistIndex(ele){
     }
 }
 
-
+//==============================
+// DataBase
+//==============================
 
 let WordList = [
     //[0]"word", [1]period
