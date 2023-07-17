@@ -12,6 +12,8 @@ body{
     line-height: 100%;
     cursor: pointer;
 }
+
+
 .CalcAge{
     position:absolute;
 }
@@ -23,11 +25,14 @@ body{
     border-radius: 100%;
 }
 [isPushed="false"]{
-    background-color: rgb(233, 0, 0);
+    animation:ButtonOn 0.3s ease-out;
+    animation-fill-mode: forwards;
 }
 [isPushed="true"]{
-    background-color: rgba(78, 0, 0, 0.74);
+    animation:ButtonOff 0.3s ease-out;
+    animation-fill-mode: forwards;
 }
+
 #CalcAgeMessage{
     width:200px;
     height:50px;
@@ -37,8 +42,43 @@ body{
     line-height: 50px;
 }
 [isDisplayed="false"]{
-    display: none;
+    animation:FadeOut 1s linear;
+    animation-fill-mode: forwards;
 }
 [isDisplayed="true"]{
-    display: block;
+    animation:FadeIn 1s linear;
+    animation-fill-mode: forwards;
+}
+
+@keyframes ButtonOn{
+    0% {
+        background-color: rgb(78, 0, 0);
+    }
+    100% {
+        background-color: rgb(233, 0, 0);
+    }
+}
+@keyframes ButtonOff{
+    0% {
+        background-color: rgb(233, 0, 0);
+    }
+    100% {
+        background-color: rgb(78, 0, 0);
+    }
+}
+@keyframes FadeIn{
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+}
+@keyframes FadeOut{
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
 }
