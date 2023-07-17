@@ -1,22 +1,21 @@
+let Year=new Date().getFullYear();
 let ExistWord=[];
 let HeightMarginTop=100;
 let HeightMarginBottom=document.body.clientHeight*1.2;
 let mouseX=0,mouseY=0;
 
-//shakeでぴかぴか
-//
-//年齢推定
 //クリックで年齢表示
 //
 //データベース作成
 
 //==============================
-// 1.class
+// 1.class, object
 //==============================
 
 class Word{
     Element;
     ExistIndex;
+    Period;
     Origin;
     Num;//0~
     Letter;
@@ -40,9 +39,10 @@ class Word{
     static MaxFollowSpeed=0.003;//*=Speed in Drag()
     static MinFollowSpeed=0.001;
 
-    constructor(ind,or,nu,ler,lef){
+    constructor(ind,or,period,nu,ler,lef){
         this.ExistIndex=ind;
         this.Origin=or;
+        this.Period=period;
         this.Num=nu;
         this.Letter=ler;
         this.Top=-HeightMarginTop+this.Num*20;
@@ -243,6 +243,37 @@ class Word{
     }
 }
 
+CalcAgeSystem={
+    CalcAge:function(){
+        let PeList=[];
+        ExistWord.forEach(function(w,i){
+            if(!w.IsFalling && w.Num==0){
+                PeList.push(w.Period);
+            }
+        })
+
+        if(PeList.length<1)return "";
+
+        let sum=0;
+        PeList.forEach(function(pe,i){
+            sum+=pe;
+        })
+        let ave=Math.floor(sum/PeList.length);
+        return Year-ave;
+    },
+    MakeMessage:function(){
+        let str
+        if(this.CalcAge()==""){
+            str="推定年齢を算出中..."
+            return str;
+        }else{
+            str="推定年齢："+this.CalcAge()+"歳";
+            return str;
+        }
+    }
+}
+
+
 //==============================
 // 2.main functions
 //==============================
@@ -265,7 +296,7 @@ function WordFall(){
     let lef=Math.floor(Math.random()*(document.body.clientWidth));
     let WordArray=WordList[index][0].split("");
     WordArray.forEach(function(letter,i){
-        let NewWord=new Word(ExistWord.length,WordList[index][0],i,letter,lef);
+        let NewWord=new Word(ExistWord.length,WordList[index][0],WordList[index][1],i,letter,lef);
         ExistWord.push(NewWord);
     })
 }
@@ -292,6 +323,7 @@ $(document).mousedown(function(e){
     if(index!==""){
         ExistWord[index].MouseDown();
     }
+    $("#CalcAgeMessage").text(CalcAgeSystem.MakeMessage());
 })
 $(document).mouseover(function(e){
     let index=GetExistIndex(e.target);
@@ -316,6 +348,14 @@ $(document).mousemove(function(e){
     e.preventDefault();
     mouseX=e.clientX;
     mouseY=e.clientY;
+})
+$("#CalcAgeButton").mousedown(function(e){
+    if(e.target.getAttribute("isPushed")=="false"){
+        e.target.setAttribute("isPushed","true");
+        $("#CalcAgeMessage").text(CalcAgeSystem.MakeMessage());
+    }else if(e.target.getAttribute("isPushed")=="true"){
+        e.target.setAttribute("isPushed","false");
+    }
 })
 
 function GetExistIndex(ele){
