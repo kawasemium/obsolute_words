@@ -3,9 +3,7 @@ let HeightMarginTop=100;
 let HeightMarginBottom=document.body.clientHeight*1.2;
 let mouseX=0,mouseY=0;
 
-//shakeで色変え
 //shakeでぴかぴか
-//カーソル
 //
 //年齢推定
 //クリックで年齢表示
@@ -107,7 +105,9 @@ class Word{
             let moveX=mouseX-this.Left;
             let moveY=mouseY-this.Top;
             let Distance=Math.sqrt(Math.pow(moveX,2)+Math.pow(moveY,2));
-            let Speed=Distance-1.5*this.Size*this.FromTarget;
+            let SizeDistance=1.5;
+            if(this.Size>40)SizeDistance=1.3;
+            let Speed=Distance-SizeDistance*this.Size*this.FromTarget;
             if(Speed>0){
                 if(Speed<200 && this.Size<50)Speed*=0.003;
                 else Speed*=0.001;
