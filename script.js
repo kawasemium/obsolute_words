@@ -17,6 +17,7 @@ class Word{
     Size;
     Color;
     IsDragging;
+    IsTarget;
     IsFalling;
     FallingSpeed;
     constructor(ind,or,nu,ler,lef){
@@ -30,6 +31,7 @@ class Word{
         this.Color=[255,255,255,0.5];
 
         this.IsDragging=false;
+        this.IsTarget=false;
         this.IsFalling=true;
         this.FallingSpeed=20;
 
@@ -69,8 +71,15 @@ class Word{
         this.Top+=this.FallingSpeed;
     }
     Drag(){
-        this.Top=mouseY;
-        this.Left=mouseX;
+        if(this.IsTarget){
+            this.Top=mouseY;
+            this.Left=mouseX;
+        }else{
+            let moveX=mouseX-this.Left;
+            let moveY=mouseY-this.Top;
+            this.Left+=moveX/2;
+            this.Top+=moveY/2;
+        }
     }
 
     MouseOver(index){
@@ -80,9 +89,11 @@ class Word{
         //console.log(this.ExistIndex+" is Outed");
     }
     MouseDown(){
-        this.IsFalling=false;
-        this.IsDragging=true;
-        console.log(this.FindFamily());
+        this.IsTarget=true;
+        this.FindFamily().forEach(function(w,i){
+            w.IsFalling=false;
+            w.IsDragging=true;
+        });
     }
     MouseUp(){
     }
@@ -153,6 +164,7 @@ $(document).mouseup(function(e){
     e.preventDefault();
     ExistWord.forEach(function(w,i){
         w.IsDragging=false;
+        w.IsTarget=false;
     })
 })
 $(document).mousemove(function(e){
