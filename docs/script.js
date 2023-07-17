@@ -36,8 +36,8 @@ class Word{
     static FastRatioOfClientHeight=0.3;
     static NonShakeDark=50;//-50
     static ChikachikaDark=40;//-0~40
-    static MaxFollowSpeed=0.003;//*=Speed in Drag()
-    static MinFollowSpeed=0.001;
+    static MaxFollowSpeed=0.0015;//*=Speed in Drag()
+    static MinFollowSpeed=0.0005;
 
     constructor(ind,or,period,nu,ler,lef){
         this.ExistIndex=ind;
@@ -59,7 +59,7 @@ class Word{
         this.IsTarget=false;
         this.FromTarget=1;
         this.IsFalling=true;
-        this.FallingSpeed=20;
+        this.FallingSpeed=10;
 
         this.Create();
     }
@@ -279,7 +279,7 @@ CalcAgeSystem={
 //==============================
 
 window.onload=function(){
-    UpdateTimer=setInterval(Update,100);
+    UpdateTimer=setInterval(Update,50);
 }
 function Update(){
     let FallRate=5;

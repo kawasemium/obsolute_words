@@ -25,12 +25,11 @@ body{
     border-radius: 100%;
 }
 [isPushed="false"]{
-    animation:ButtonOn 0.3s ease-out;
-    animation-fill-mode: forwards;
+    animation:ButtonOn 0.3s ease-out forwards,
+                Flash 0.3s infinite;
 }
 [isPushed="true"]{
-    animation:ButtonOff 0.3s ease-out;
-    animation-fill-mode: forwards;
+    animation:ButtonOff 0.3s ease-out forwards;
 }
 
 #CalcAgeMessage{
@@ -55,15 +54,35 @@ body{
         background-color: rgb(78, 0, 0);
     }
     100% {
-        background-color: rgb(233, 0, 0);
+        background-color: rgb(255, 21, 21);
     }
 }
 @keyframes ButtonOff{
     0% {
-        background-color: rgb(233, 0, 0);
+        background-color: rgb(255, 21, 21);
     }
     100% {
         background-color: rgb(78, 0, 0);
+    }
+}
+@keyframes Flash{
+    0%{
+        opacity: 1;
+    }
+    20%{
+        opacity: 0.9;
+    }
+    30%{
+        opacity: 1;
+    }
+    50%{
+        opacity: 0.95;
+    }
+    65%{
+        opacity: 1;
+    }
+    80%{
+        opacity: 0.85;
     }
 }
 @keyframes FadeIn{
