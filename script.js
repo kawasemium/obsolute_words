@@ -18,6 +18,8 @@ class Word{
     Color;
     IsHovering;
     IsDragging;
+    DragPointX;
+    DragPointY;
     IsTarget;
     FromTarget;//0, 1, ...
     IsFalling;
@@ -34,6 +36,8 @@ class Word{
 
         this.IsHovering=false;
         this.IsDragging=false;
+        this.DragPointX=0;//Deviate; needed to + mouseX
+        this.DragPointY=0;
         this.IsTarget=false;
         this.FromTarget=1;
         this.IsFalling=true;
@@ -45,6 +49,7 @@ class Word{
         if(this.IsFalling){
             this.Fall();
         }else if(this.IsDragging){
+            this.Size*=1.01;
             this.Drag();
         }
         this.ReSetting();
@@ -76,8 +81,11 @@ class Word{
     }
     Drag(){
         if(this.IsTarget){
-            this.Top=mouseY;
-            this.Left=mouseX;
+            if(mouseY+this.DragPointY-this.Top>document.body.clientHeight*0.3){
+                console.log("rakka");
+            }
+            this.Top=mouseY+this.DragPointY;
+            this.Left=mouseX+this.DragPointX;
         }else{
             let moveX=mouseX-this.Left;
             let moveY=mouseY-this.Top;
@@ -91,6 +99,9 @@ class Word{
                 this.Top+=moveY*Speed;
             }
         }
+    }
+    Exclude(){
+
     }
 
     MouseOver(){
@@ -106,6 +117,8 @@ class Word{
     MouseDown(){
         this.IsTarget=true;
         let TargetNum=this.Num;
+        this.DragPointX=this.Left-mouseX;
+        this.DragPointY=this.Top-mouseY;
         this.FindFamily().forEach(function(w,i){
             w.IsFalling=false;
             w.IsDragging=true;

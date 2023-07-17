@@ -8,4 +8,5 @@ body{
 }
 .ExistWord{
     position: absolute;
+    line-height: 100%;
 }
