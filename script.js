@@ -25,6 +25,7 @@ class Word{
     Size;
     Color;
     ColorChangeMode;//ColorChange(); 0~5
+    ShakeDegree;//0~255
     IsHovering;
     IsDragging;
     DragPointX;
@@ -33,6 +34,12 @@ class Word{
     FromTarget;//0, 1, ...
     IsFalling;
     FallingSpeed;
+    static FastRatioOfClientHeight=0.3;
+    static NonShakeDark=50;//-50
+    static ChikachikaDark=40;//-0~40
+    static MaxFollowSpeed=0.003;//*=Speed in Drag()
+    static MinFollowSpeed=0.001;
+
     constructor(ind,or,nu,ler,lef){
         this.ExistIndex=ind;
         this.Origin=or;
@@ -43,6 +50,7 @@ class Word{
         this.Size=20;
         this.Color=[0,255,255,1];
         this.ColorChangeMode=3;
+        this.ShakeDegree=0;
 
         this.IsHovering=false;
         this.IsDragging=false;
@@ -62,6 +70,10 @@ class Word{
             this.Size*=1.01;
             this.Drag();
         }
+        if(!this.IsFalling){
+            this.ShakeDegree--;
+            if(this.ShakeDegree<0)this.ShakeDegree=0;
+        }
         this.ReSetting();
     }
     Create(){
@@ -78,7 +90,8 @@ class Word{
         this.Element.style.fontSize=this.Size+"px";
 
         if(!this.IsFalling){
-            this.Element.style.color="rgba("+this.Color[0]+","+this.Color[1]+","+this.Color[2]+","+this.Color[3];
+            let Col=this.MakeShining(this.Color,this.ShakeDegree);
+            this.Element.style.color="rgba("+Col[0]+","+Col[1]+","+Col[2]+","+Col[3];
         }else if(this.IsHovering){
             this.Element.style.color="rgba("+this.Color[0]+","+this.Color[1]+","+this.Color[2]+",0.8)";
         }else{
@@ -91,13 +104,13 @@ class Word{
     }
     Drag(){
         if(this.IsTarget){
-            if(mouseY+this.DragPointY-this.Top>document.body.clientHeight*0.3){
+            if(mouseY+this.DragPointY-this.Top>document.body.clientHeight*Word.FastRatioOfClientHeight){
                 this.Exclude();
                 return;
             }
             let Degree=Math.abs(mouseX+this.DragPointX-this.Left);
-            if(Degree>document.body.clientWidth*0.3){
-                this.Shake(Degree/(document.body.clientWidth*0.3));
+            if(Degree>document.body.clientWidth*Word.FastRatioOfClientHeight){
+                this.Shake(Degree/(document.body.clientWidth*Word.FastRatioOfClientHeight));
             }
             this.Top=mouseY+this.DragPointY;
             this.Left=mouseX+this.DragPointX;
@@ -109,8 +122,8 @@ class Word{
             if(this.Size>40)SizeDistance=1.3;
             let Speed=Distance-SizeDistance*this.Size*this.FromTarget;
             if(Speed>0){
-                if(Speed<200 && this.Size<50)Speed*=0.003;
-                else Speed*=0.001;
+                if(Speed<200 && this.Size<50)Speed*=Word.MaxFollowSpeed;
+                else Speed*=Word.MinFollowSpeed;
                 Speed/=this.FromTarget;
                 this.Left+=moveX*Speed;
                 this.Top+=moveY*Speed;
@@ -122,6 +135,7 @@ class Word{
         // For developer tool, 3 -> About 5
         this.FindFamily().forEach(function(w,i){
             w.Color=w.ColorChande(deg,w.Color[0],w.Color[1],w.Color[2]);
+            w.ShakeDegree+=deg*10;
         })
     }
     ColorChande(deg,r,g,b){
@@ -174,6 +188,17 @@ class Word{
                 break;
         }
         let Col=[r,g,b,1];
+        return Col;
+    }
+    MakeShining(rgba,howShaked){
+        let Col=[rgba[0],rgba[1],rgba[2],rgba[3]];
+        for(let i=0;i<3;i++){
+            Col[i]=Col[i]+howShaked-Word.NonShakeDark;
+            Col[i]-=Math.floor(Math.random()*Word.ChikachikaDark);
+
+            if(Col[i]>255)Col[i]=255;
+            if(Col[i]<0)Col[i]=0;
+        }
         return Col;
     }
     Exclude(){
