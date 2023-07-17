@@ -1,6 +1,16 @@
 let ExistWord=[];
-let HeightMargin=document.body.clientHeight*1.2;
+let HeightMarginTop=100;
+let HeightMarginBottom=document.body.clientHeight*1.2;
 let mouseX=0,mouseY=0;
+
+//shakeで色変え
+//shakeでぴかぴか
+//カーソル
+//
+//年齢推定
+//クリックで年齢表示
+//
+//データベース作成
 
 //==============================
 // 1.class
@@ -16,6 +26,7 @@ class Word{
     Left;
     Size;
     Color;
+    ColorChangeMode;//ColorChange(); 0~5
     IsHovering;
     IsDragging;
     DragPointX;
@@ -29,10 +40,11 @@ class Word{
         this.Origin=or;
         this.Num=nu;
         this.Letter=ler;
-        this.Top=-HeightMargin+this.Num*20;
+        this.Top=-HeightMarginTop+this.Num*20;
         this.Left=lef;
         this.Size=20;
-        this.Color=[255,255,255,0.5];
+        this.Color=[0,255,255,1];
+        this.ColorChangeMode=3;
 
         this.IsHovering=false;
         this.IsDragging=false;
@@ -70,7 +82,7 @@ class Word{
         if(!this.IsFalling){
             this.Element.style.color="rgba("+this.Color[0]+","+this.Color[1]+","+this.Color[2]+","+this.Color[3];
         }else if(this.IsHovering){
-            this.Element.style.color="rgba(255,255,255,1)";
+            this.Element.style.color="rgba("+this.Color[0]+","+this.Color[1]+","+this.Color[2]+",0.8)";
         }else{
             this.Element.style.color="rgba(255,255,255,0.5)";
         }
@@ -97,7 +109,7 @@ class Word{
             let Distance=Math.sqrt(Math.pow(moveX,2)+Math.pow(moveY,2));
             let Speed=Distance-1.5*this.Size*this.FromTarget;
             if(Speed>0){
-                if(Speed<200)Speed*=0.003;
+                if(Speed<200 && this.Size<50)Speed*=0.003;
                 else Speed*=0.001;
                 Speed/=this.FromTarget;
                 this.Left+=moveX*Speed;
@@ -108,7 +120,61 @@ class Word{
     Shake(deg){
         // 1 < deg < 3
         // For developer tool, 3 -> About 5
-        console.log(deg);
+        this.FindFamily().forEach(function(w,i){
+            w.Color=w.ColorChande(deg,w.Color[0],w.Color[1],w.Color[2]);
+        })
+    }
+    ColorChande(deg,r,g,b){
+        deg*=20;
+        switch(this.ColorChangeMode){
+            case 0:
+                g+=deg;
+                if(g>255){
+                    g=255;
+                    this.ColorChangeMode++;
+                }
+                break;
+            case 1:
+                r-=deg;
+                if(r<0){
+                    r=0;
+                    this.ColorChangeMode++;
+                }
+                break;
+            case 2:
+                b+=deg;
+                if(b>255){
+                    b=255;
+                    this.ColorChangeMode++;
+                }
+                break;
+            case 3:
+                //first
+                g-=deg;
+                if(g<0){
+                    g=0;
+                    this.ColorChangeMode++;
+                }
+                break;
+            case 4:
+                r+=deg;
+                if(r>255){
+                    r=255;
+                    this.ColorChangeMode++;
+                }
+                break;
+            case 5:
+                b-=deg;
+                if(b<0){
+                    b=0;
+                    this.ColorChangeMode=0;
+                }
+                break;
+            default:
+                break;
+        }
+        let Col=[r,g,b,1];
+        return Col;
     }
     Exclude(){
         this.FindFamily().forEach(function(w,i){
@@ -180,7 +246,7 @@ function WordFall(){
 }
 
 function WordCleaner(w,i){
-    if(w.Top>document.body.clientHeight+HeightMargin && w.IsFalling){
+    if(w.Top>document.body.clientHeight+HeightMarginBottom && w.IsFalling){
         w.Element.remove();
         delete w;
         delete ExistWord[i];
@@ -192,7 +258,7 @@ function WordCleaner(w,i){
 // 3.events
 //==============================
 $(window).resize(function(){
-    HeightMargin=document.body.clientHeight*1.2;
+    HeightMarginBottom=document.body.clientHeight*1.2;
 })
 
 $(document).mousedown(function(e){
