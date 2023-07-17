@@ -2,9 +2,9 @@ let ExistWord=[];
 let HeightMargin=50;
 let mouseX=0,mouseY=0;
 
-/*
-just an letter can be stopped
-*/ 
+//==============================
+// 1.class
+//==============================
 
 class Word{
     Element;
@@ -54,10 +54,6 @@ class Word{
         this.Element.className="ExistWord";
         this.Element.innerText=this.Letter;
         this.Element.setAttribute("ExistIndex",this.ExistIndex);
-        //this.Element.addEventListener("mouseover",this.MouseOver(this.ExistIndex));
-        //this.Element.addEventListener("mouseout",this.MouseOut());
-        //this.Element.addEventListener("mousedown",this.MouseDown);
-        //this.Element.addEventListener("mouseup",this.MouseUp());*/
         this.ReSetting();
         document.body.appendChild(this.Element);
     }
@@ -68,6 +64,10 @@ class Word{
 
         if(!this.IsFalling){
             this.Element.style.color="rgba("+this.Color[0]+","+this.Color[1]+","+this.Color[2]+","+this.Color[3];
+        }else if(this.IsHovering){
+            this.Element.style.color="rgba(255,255,255,1)";
+        }else{
+            this.Element.style.color="rgba(255,255,255,0.5)";
         }
     }
 
@@ -82,20 +82,26 @@ class Word{
             let moveX=mouseX-this.Left;
             let moveY=mouseY-this.Top;
             let Distance=Math.sqrt(Math.pow(moveX,2)+Math.pow(moveY,2));
-            if(Distance>this.Size*this.FromTarget){
-                this.Left+=moveX/2;
-                this.Top+=moveY/2;
+            let Speed=Distance-1.5*this.Size*this.FromTarget;
+            if(Speed>0){
+                if(Speed<200)Speed*=0.003;
+                else Speed*=0.001;
+                Speed/=this.FromTarget;
+                this.Left+=moveX*Speed;
+                this.Top+=moveY*Speed;
             }
         }
     }
 
-    MouseOver(index){
+    MouseOver(){
         this.FindFamily().forEach(function(w,i){
             w.IsHovering=true;
         })
     }
     MouseOut(){
-        //console.log(this.ExistIndex+" is Outed");
+        this.FindFamily().forEach(function(w,i){
+            w.IsHovering=false;
+        })
     }
     MouseDown(){
         this.IsTarget=true;
@@ -104,10 +110,9 @@ class Word{
             w.IsFalling=false;
             w.IsDragging=true;
             w.FromTarget=Math.abs(w.Num-TargetNum);
-        });
+        })
     }
-    MouseUp(){
-    }
+    //MouseUp() -> 3.events
 
     FindFamily(){
         let Arr=[];
@@ -121,7 +126,7 @@ class Word{
 }
 
 //==============================
-// main functions
+// 2.main functions
 //==============================
 
 window.onload=function(){
@@ -148,7 +153,7 @@ function WordFall(){
 }
 
 function WordCleaner(w,i){
-    if(w.Top>document.body.clientHeight+HeightMargin){
+    if(w.Top>document.body.clientHeight+HeightMargin && w.IsFalling){
         w.Element.remove();
         delete w;
         delete ExistWord[i];
@@ -157,7 +162,7 @@ function WordCleaner(w,i){
 }
 
 //==============================
-// events
+// 3.events
 //==============================
 
 $(document).mousedown(function(e){
@@ -201,7 +206,7 @@ function GetExistIndex(ele){
 }
 
 //==============================
-// DataBase
+// 4.DataBase
 //==============================
 
 let WordList = [
