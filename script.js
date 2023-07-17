@@ -26,7 +26,7 @@ class Word{
         this.Top=-HeightMargin+this.Num*20;
         this.Left=lef;
         this.Size=20;
-        this.Color=[255,255,255];
+        this.Color=[255,255,255,0.5];
 
         this.IsDragging=false;
         this.IsFalling=true;
@@ -47,23 +47,38 @@ class Word{
         this.Element.className="ExistWord";
         this.Element.innerText=this.Letter;
         this.Element.setAttribute("ExistIndex",this.ExistIndex);
-        this.Element.addEventListener("mousedown",this.Drag);
-        //this.Element.addEventListener("mouseup",this.Put);
+        //this.Element.addEventListener("mouseover",this.MouseOver(this.ExistIndex));
+        //this.Element.addEventListener("mouseout",this.MouseOut());
+        //this.Element.addEventListener("mousedown",this.MouseDown);
+        //this.Element.addEventListener("mouseup",this.MouseUp());*/
         this.ReSetting();
         document.body.appendChild(this.Element);
-    }
-    Fall(){
-        this.Top+=this.FallingSpeed;
     }
     ReSetting(){
         this.Element.style.top=this.Top+"px";
         this.Element.style.left=this.Left+"px";
         this.Element.style.fontSize=this.Size+"px";
-        this.Element.style.color="rgb("+this.Color[0]+","+this.Color[1]+","+this.Color[2];
+
+        if(!this.IsFalling){
+            this.Element.style.color="rgba("+this.Color[0]+","+this.Color[1]+","+this.Color[2]+","+this.Color[3];
+        }
     }
-    Drag(){
-        let index=this.getAttribute("ExistIndex");
-        ExistWord[index].IsFalling=false;
+    Fall(){
+        this.Top+=this.FallingSpeed;
+    }
+    MouseOver(index){
+        console.log(this.ExistIndex+" is Overed");
+    }
+    MouseLeave(){
+        console.log(this.ExistIndex+" is Leaved");
+    }
+    MouseDown(){
+        //let index=ele.getAttribute("ExistIndex");
+        //ExistWord[index].IsFalling=false;
+        console.log(this.ExistIndex+" is Downed");
+    }
+    MouseUp(){
+
     }
 }
 
@@ -101,8 +116,9 @@ function WordCleaner(w,i){
 
 $(document).mousedown(function(e){
     e.preventDefault();
-    if(e.target.getAttribute("class")){
-        console.log(1);
+    let index=GetExistIndex(e.target);
+    if(index!==""){
+        ExistWord[index].MouseDown();
     }
 })
 $(document).mouseup(function(e){
@@ -111,6 +127,26 @@ $(document).mouseup(function(e){
         w.IsDragging=false;
     })
 })
+$(document).mouseover(function(e){
+    let index=GetExistIndex(e.target);
+    if(index!==""){
+        ExistWord[index].MouseOver();
+    }
+})
+$(document).mouseout(function(e){
+    let index=GetExistIndex(e.target);
+    if(index!==""){
+        ExistWord[index].MouseLeave();
+    }
+})
+
+function GetExistIndex(ele){
+    if(ele.getAttribute("class")=="ExistWord"){
+        return ele.getAttribute("ExistIndex");
+    }else{
+        return "";
+    }
+}
 
 
 
