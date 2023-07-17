@@ -85,6 +85,10 @@ class Word{
                 this.Exclude();
                 return;
             }
+            let Degree=Math.abs(mouseX+this.DragPointX-this.Left);
+            if(Degree>document.body.clientWidth*0.3){
+                this.Shake(Degree/(document.body.clientWidth*0.3));
+            }
             this.Top=mouseY+this.DragPointY;
             this.Left=mouseX+this.DragPointX;
         }else{
@@ -100,6 +104,11 @@ class Word{
                 this.Top+=moveY*Speed;
             }
         }
+    }
+    Shake(deg){
+        // 1 < deg < 3
+        // For developer tool, 3 -> About 5
+        console.log(deg);
     }
     Exclude(){
         this.FindFamily().forEach(function(w,i){
