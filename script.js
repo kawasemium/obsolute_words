@@ -1,5 +1,5 @@
 let ExistWord=[];
-let HeightMargin=50;
+let HeightMargin=document.body.clientHeight*1.2;
 let mouseX=0,mouseY=0;
 
 //==============================
@@ -82,7 +82,8 @@ class Word{
     Drag(){
         if(this.IsTarget){
             if(mouseY+this.DragPointY-this.Top>document.body.clientHeight*0.3){
-                console.log("rakka");
+                this.Exclude();
+                return;
             }
             this.Top=mouseY+this.DragPointY;
             this.Left=mouseX+this.DragPointX;
@@ -101,7 +102,11 @@ class Word{
         }
     }
     Exclude(){
-
+        this.FindFamily().forEach(function(w,i){
+            w.IsDragging=false;
+            w.IsTarget=false;
+            w.IsFalling=true;
+        })
     }
 
     MouseOver(){
@@ -177,6 +182,9 @@ function WordCleaner(w,i){
 //==============================
 // 3.events
 //==============================
+$(window).resize(function(){
+    HeightMargin=document.body.clientHeight*1.2;
+})
 
 $(document).mousedown(function(e){
     e.preventDefault();
