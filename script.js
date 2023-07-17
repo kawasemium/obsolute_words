@@ -1,5 +1,6 @@
 let ExistWord=[];
 let HeightMargin=50;
+let mouseX=0,mouseY=0;
 
 /*
 just an letter can be stopped
@@ -37,8 +38,8 @@ class Word{
     Update(){
         if(this.IsFalling){
             this.Fall();
-        }else{
-
+        }else if(this.IsDragging){
+            this.Drag();
         }
         this.ReSetting();
     }
@@ -63,22 +64,37 @@ class Word{
             this.Element.style.color="rgba("+this.Color[0]+","+this.Color[1]+","+this.Color[2]+","+this.Color[3];
         }
     }
+
     Fall(){
         this.Top+=this.FallingSpeed;
     }
-    MouseOver(index){
-        console.log(this.ExistIndex+" is Overed");
+    Drag(){
+        this.Top=mouseY;
+        this.Left=mouseX;
     }
-    MouseLeave(){
-        console.log(this.ExistIndex+" is Leaved");
+
+    MouseOver(index){
+        //console.log(this.ExistIndex+" is Overed");
+    }
+    MouseOut(){
+        //console.log(this.ExistIndex+" is Outed");
     }
     MouseDown(){
-        //let index=ele.getAttribute("ExistIndex");
-        //ExistWord[index].IsFalling=false;
-        console.log(this.ExistIndex+" is Downed");
+        this.IsFalling=false;
+        this.IsDragging=true;
+        console.log(this.FindFamily());
     }
     MouseUp(){
+    }
 
+    FindFamily(){
+        let Arr=[];
+        let Cnt=this.Origin.length;
+        let From=this.ExistIndex-this.Num;
+        for(let i=From;i<From+Cnt;i++){
+            Arr.push(ExistWord[i]);
+        }
+        return Arr;
     }
 }
 
@@ -121,12 +137,6 @@ $(document).mousedown(function(e){
         ExistWord[index].MouseDown();
     }
 })
-$(document).mouseup(function(e){
-    e.preventDefault();
-    ExistWord.forEach(function(w,i){
-        w.IsDragging=false;
-    })
-})
 $(document).mouseover(function(e){
     let index=GetExistIndex(e.target);
     if(index!==""){
@@ -136,8 +146,19 @@ $(document).mouseover(function(e){
 $(document).mouseout(function(e){
     let index=GetExistIndex(e.target);
     if(index!==""){
-        ExistWord[index].MouseLeave();
+        ExistWord[index].MouseOut();
     }
+})
+$(document).mouseup(function(e){
+    e.preventDefault();
+    ExistWord.forEach(function(w,i){
+        w.IsDragging=false;
+    })
+})
+$(document).mousemove(function(e){
+    e.preventDefault();
+    mouseX=e.clientX;
+    mouseY=e.clientY;
 })
 
 function GetExistIndex(ele){
