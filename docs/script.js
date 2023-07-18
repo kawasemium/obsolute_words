@@ -84,6 +84,14 @@ class Word{
         this.Element.style.top=this.Top+"px";
         this.Element.style.left=this.Left+"px";
         this.Element.style.fontSize=this.Size+"px";
+        if(this.Letter=="ー"){
+            let w=ExistWord[this.ExistIndex-this.Num];
+            if(Math.abs(this.Top-w.Top)>Math.abs(this.Left-w.Left)){
+                this.Element.style.writingMode="vertical-rl";
+            }else{
+                this.Element.style.writingMode="horizontal-tb";
+            }
+        }
 
         if(!this.IsFalling){
             let Col=this.MakeShining(this.Color,this.ShakeDegree);
