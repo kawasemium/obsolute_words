@@ -1,5 +1,6 @@
 let Year=new Date().getFullYear();
 let ExistWord=[];
+let FallRate=20;// 1/frequency
 let HeightMarginTop=100;
 let HeightMarginBottom=document.body.clientHeight*1.2;
 let mouseX=0,mouseY=0;
@@ -29,9 +30,10 @@ class Word{
     FromTarget;//0, 1, ...
     IsFalling;
     FallingSpeed;
-    static FastRatioOfClientHeight=0.3;
-    static NonShakeDark=50;//-50
-    static ChikachikaDark=40;//-0~40
+    static FastRatioOfClientWidth=0.2; //*100%
+    static FastRatioOfClientHeight=0.2;
+    static NonShakeDark=50;//rgb-50
+    static ChikachikaDark=40;//rgb-0~40
     static MaxFollowSpeed=0.0015;//*=Speed in Drag()
     static MinFollowSpeed=0.0005;
 
@@ -55,7 +57,7 @@ class Word{
         this.IsTarget=false;
         this.FromTarget=1;
         this.IsFalling=true;
-        this.FallingSpeed=10;
+        this.FallingSpeed=7;
 
         this.Create();
     }
@@ -84,12 +86,17 @@ class Word{
         this.Element.style.top=this.Top+"px";
         this.Element.style.left=this.Left+"px";
         this.Element.style.fontSize=this.Size+"px";
-        if(this.Letter=="ー"){
+
+        let l=this.Letter;
+        if(l=="ー" || l=="～" || l=="、"){
             let w=ExistWord[this.ExistIndex-this.Num];
-            if(Math.abs(this.Top-w.Top)>Math.abs(this.Left-w.Left)){
-                this.Element.style.writingMode="vertical-rl";
-            }else{
-                this.Element.style.writingMode="horizontal-tb";
+            if(!w)console.log("Letter that [ー～、] refered is not exist");
+            else{
+                if(Math.abs(this.Top-w.Top)>Math.abs(this.Left-w.Left)){
+                    this.Element.style.writingMode="vertical-rl";
+                }else{
+                    this.Element.style.writingMode="horizontal-tb";
+                }
             }
         }
 
@@ -113,8 +120,8 @@ class Word{
                 return;
             }
             let Degree=Math.abs(mouseX+this.DragPointX-this.Left);
-            if(Degree>document.body.clientWidth*Word.FastRatioOfClientHeight){
-                this.Shake(Degree/(document.body.clientWidth*Word.FastRatioOfClientHeight));
+            if(Degree>document.body.clientWidth*Word.FastRatioOfClientWidth){
+                this.Shake(Degree/(document.body.clientWidth*Word.FastRatioOfClientWidth));
             }
             this.Top=mouseY+this.DragPointY;
             this.Left=mouseX+this.DragPointX;
@@ -139,11 +146,11 @@ class Word{
         // For developer tool, 3 -> About 5
         this.FindFamily().forEach(function(w,i){
             w.Color=w.ColorChande(deg,w.Color[0],w.Color[1],w.Color[2]);
-            w.ShakeDegree+=deg*10;
+            w.ShakeDegree+=deg*8;
         })
     }
     ColorChande(deg,r,g,b){
-        deg*=20;
+        deg*=40;
         switch(this.ColorChangeMode){
             case 0:
                 g+=deg;
@@ -211,6 +218,7 @@ class Word{
             w.IsTarget=false;
             w.IsFalling=true;
         })
+        $("#CalcAgeMessage").text(CalcAgeSystem.MakeMessage());
     }
 
     MouseOver(){
@@ -285,9 +293,9 @@ CalcAgeSystem={
 
 window.onload=function(){
     UpdateTimer=setInterval(Update,50);
+    $("#AboutButton").mousedown();
 }
 function Update(){
-    let FallRate=5;
     if(Math.floor(Math.random()*FallRate)==0)WordFall();
 
     ExistWord.forEach(function(w,i){
@@ -363,6 +371,12 @@ $("#CalcAgeButton").mousedown(function(e){
         e.target.setAttribute("isPushed","false");
         $("#CalcAgeMessage").attr("isDisplayed","false");
     }
+})
+$("#AboutButton").mousedown(function(e){
+    $("#AboutWrap").css("display","block");
+})
+$("#ExitAbout").mousedown(function(e){
+    $("#AboutWrap").css("display","none");
 })
 
 function GetExistIndex(ele){
